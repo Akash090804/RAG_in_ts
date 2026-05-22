@@ -8,17 +8,20 @@ const bm25 = winkBM25();
 
 bm25.defineConfig({
   fldWeights: {
-    text: 1
+    text: 1,
   },
   bm25Params: {
     k1: 1.2,
-    b: 0.75
-  }
+    b: 0.75,
+  },
 });
 
 bm25.definePrepTasks([
-  nlp.readDoc,
-  (doc) => doc.tokens().out()
+  (text) => {
+    if (!text) return [];
+    const doc = nlp.readDoc(text);
+    return doc.tokens().out();
+  },
 ]);
 
 let indexed = false;
@@ -29,8 +32,15 @@ export function indexDocuments(chunks) {
 
   chunks.forEach((chunk, i) => {
 
+    const text = chunk?.pageContent;
+
+    if (!text || typeof text !== "string") {
+      console.log(`Skipping invalid chunk ${i}`);
+      return;
+    }
+
     bm25.addDoc(
-      { text: chunk.pageContent },
+      { text },
       i
     );
 
@@ -45,6 +55,9 @@ export function indexDocuments(chunks) {
 
 export function keywordSearch(query) {
 
-  return bm25.search(query);
+  if (!query || typeof query !== "string") {
+    return [];
+  }
 
+  return bm25.search(query);
 }

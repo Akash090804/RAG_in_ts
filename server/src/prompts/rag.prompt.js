@@ -1,4 +1,4 @@
-export function buildRagPrompt(context, query) {
+export function buildRagPrompt(context, query, historyText) {
 
   return `
 You are a helpful AI tutor.
@@ -11,6 +11,8 @@ say:
 
 Context:
 ${context}
+Chat History:
+${historyText}
 
 Question:
 ${query}
