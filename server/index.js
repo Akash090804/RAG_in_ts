@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import cors from "cors";
 import ragRoutes from "./src/routes/rag.routes.js";
 import youtubeRoutes from "./src/routes/youtube.routes.js";
+import chatRoutes from "./src/routes/chat.routes.js";
+
 
 dotenv.config();
 
@@ -24,7 +26,10 @@ app.use(
   "/api/rag",
   ragRoutes
 );
-
+app.use(
+  "/api/chat",
+  chatRoutes
+);
 
 
 app.get("/", (req, res) => {
