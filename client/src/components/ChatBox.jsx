@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
+import API from "../services/api";
+
 export default function ChatBox() {
 
   const [query, setQuery] = useState("");
@@ -37,8 +39,9 @@ export default function ChatBox() {
 
     try {
 
+      // Streaming API Call
       const response = await fetch(
-        "http://localhost:8000/api/chat/stream",
+        `${API.defaults.baseURL}/chat/stream`,
         {
           method: "POST",
 
@@ -59,7 +62,7 @@ export default function ChatBox() {
 
       let aiText = "";
 
-      // Empty AI message placeholder
+      // Empty AI placeholder
       setMessages((prev) => [
         ...prev,
         {
@@ -96,6 +99,14 @@ export default function ChatBox() {
     } catch (error) {
 
       console.log(error);
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          text: "Something went wrong.",
+        },
+      ]);
 
     } finally {
 
@@ -172,18 +183,19 @@ export default function ChatBox() {
           </div>
         )}
 
-        {/* Auto Scroll Ref */}
+        {/* Auto Scroll */}
         <div ref={chatEndRef} />
 
       </div>
 
-      {/* Input Section */}
+      {/* Input */}
       <div className="mt-5 flex gap-4">
 
         <input
           type="text"
           placeholder="Ask something about the video..."
           value={query}
+
           onChange={(e) =>
             setQuery(e.target.value)
           }
